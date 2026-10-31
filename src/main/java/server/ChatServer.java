@@ -1,7 +1,4 @@
 package server;
-
-import server.commands.ResponseProcessor;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,17 +7,17 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class EchoServer {
+public class ChatServer {
     private final int port;
     private final ExecutorService pool = Executors.newCachedThreadPool();
 
 
-    private EchoServer(int port) {
+    private ChatServer(int port) {
         this.port = port;
     }
 
-    public static EchoServer bindToPort(int port) {
-        return new EchoServer(port);
+    public static ChatServer bindToPort(int port) {
+        return new ChatServer(port);
     }
 
     public void run() {
