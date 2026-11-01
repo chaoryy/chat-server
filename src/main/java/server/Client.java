@@ -7,9 +7,9 @@ import java.util.Scanner;
 
 public class Client {
     private volatile String name;
-    private Socket socket;
-    private Scanner reader;
-    private PrintWriter printWriter;
+    private final Socket socket;
+    private final Scanner reader;
+    private final PrintWriter printWriter;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
@@ -36,10 +36,6 @@ public class Client {
         printWriter.println(msg);
     }
 
-    private boolean isQuitMsg(String msg) {
-        return "bye".equalsIgnoreCase(msg);
-    }
-
     public void close() {
         try {
             printWriter.close();
@@ -56,5 +52,9 @@ public class Client {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 }

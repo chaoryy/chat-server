@@ -48,4 +48,10 @@ public class ChatRoom {
     public Client findByName(String searchedName) {
         return clients.get(searchedName);
     }
+
+    public void notifyClients(String msg) {
+        for (Client c : clients.values()){
+            c.send("---" + msg + "---");
+        }
+    }
 }
