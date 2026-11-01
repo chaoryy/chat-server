@@ -2,14 +2,13 @@ package server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ChatServer {
     private final int port;
     private final ExecutorService pool = Executors.newCachedThreadPool();
-
+    private final ChatRoom chatRoom = new ChatRoom();
 
     private ChatServer(int port) {
         this.port = port;
@@ -23,35 +22,21 @@ public class ChatServer {
         try (ServerSocket server = new ServerSocket(port)) {
             while (!server.isClosed()) {
                 Socket clientSocket = server.accept();
-                pool.submit(() -> handle(clientSocket));
-            }
-        } catch (IOException e) {
-            System.out.printf("Вероятнее всего порт %s занят. %n", port);
-            e.printStackTrace();
-        }
-    }
-
-    private void handle(Socket socket) {
-        System.out.printf("Подключен клиент: %s%n", socket);
-
-        try (
-                socket;
-        ) {
-            sendResponse("Привет" + socket, writer);
-            while (true) {
-                String message = reader.nextLine().strip();
-                if (isEmpty(message) || isQuitMsg(message)) {
-                    break;
+                try {
+                    Client client = new Client(clientSocket);
+                    pool.submit(new ClientHandler(client, chatRoom));
+                } catch (IOException e) {
+                    System.out.println("Could not connect socket " + clientSocket + " to server.");
+                    try {
+                        clientSocket.close();
+                    } catch (IOException ioe) {
+                        System.out.println("Could not close socket " + clientSocket);
+                    }
                 }
-                System.out.printf("Client %s: %s%n", socket, message);
-                String messageToClient = responseProcessor.processResponse(message);
-                sendResponse(messageToClient.toUpperCase(), writer);
             }
-        } catch (NoSuchElementException e) {
-            System.out.println("Client dropped connection");
         } catch (IOException e) {
+            System.out.printf("Port %s might be busy. %n", port);
             e.printStackTrace();
         }
-        System.out.printf("Client [%s] disconnected%n", socket);
     }
 }
