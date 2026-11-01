@@ -2,10 +2,11 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
-    private String name;
+    private volatile String name;
     private Socket socket;
     private Scanner reader;
     private PrintWriter printWriter;
@@ -18,16 +19,16 @@ public class Client {
 
     private Scanner getReader(Socket socket) throws IOException {
         InputStream inputStream = socket.getInputStream();
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         return new Scanner(inputStreamReader);
     }
 
     private PrintWriter getWriter(Socket socket) throws IOException {
         OutputStream outputStream = socket.getOutputStream();
-        return new PrintWriter(outputStream);
+        return new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true);
     }
 
-    private String readLine() {
+    public String readLine() {
         return reader.nextLine().strip();
     }
 
@@ -35,17 +36,11 @@ public class Client {
         printWriter.println(msg);
     }
 
-    private void sendResponse(String response) throws IOException {
-        printWriter.write(response);
-        printWriter.write(System.lineSeparator());
-        printWriter.flush();
-    }
-
     private boolean isQuitMsg(String msg) {
         return "bye".equalsIgnoreCase(msg);
     }
 
-    private void close() {
+    public void close() {
         try {
             printWriter.close();
             reader.close();
