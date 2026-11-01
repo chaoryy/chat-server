@@ -1,14 +1,18 @@
 package server;
 
+import server.commands.ResponseProcessor;
+
 import java.util.NoSuchElementException;
 
 public class ClientHandler implements Runnable {
     private final Client client;
     private final ChatRoom chatRoom;
+    private final ResponseProcessor processor;
 
-    public ClientHandler(Client client, ChatRoom chatRoom) {
+    public ClientHandler(Client client, ChatRoom chatRoom, ResponseProcessor processor) {
         this.client = client;
         this.chatRoom = chatRoom;
+        this.processor = processor;
     }
 
     @Override
@@ -23,8 +27,11 @@ public class ClientHandler implements Runnable {
                 if (isQuitMsg(msg)) {
                     break;
                 }
-                chatRoom.broadcast(client, msg);
-
+                if (msg.startsWith("/")) {
+                    processor.processResponse(msg, client, chatRoom);
+                } else {
+                    chatRoom.broadcast(client, msg);
+                }
             }
         } catch (NoSuchElementException e) {
             System.out.printf("Client: %s lost connection%n", client.getName());

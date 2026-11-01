@@ -1,4 +1,6 @@
 package server;
+import server.commands.ResponseProcessor;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,6 +11,7 @@ public class ChatServer {
     private final int port;
     private final ExecutorService pool = Executors.newCachedThreadPool();
     private final ChatRoom chatRoom = new ChatRoom();
+    private final ResponseProcessor processor = new ResponseProcessor();
 
     private ChatServer(int port) {
         this.port = port;
@@ -24,7 +27,7 @@ public class ChatServer {
                 Socket clientSocket = server.accept();
                 try {
                     Client client = new Client(clientSocket);
-                    pool.submit(new ClientHandler(client, chatRoom));
+                    pool.submit(new ClientHandler(client, chatRoom, processor));
                 } catch (IOException e) {
                     System.out.println("Could not connect socket " + clientSocket + " to server.");
                     try {

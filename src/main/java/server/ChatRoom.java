@@ -54,4 +54,12 @@ public class ChatRoom {
             c.send("---" + msg + "---");
         }
     }
+
+    public void notifyOthers(Client client, String msg) {
+        for (Client c : clients.values()) {
+            if (c != client) {
+                c.send(msg);
+            }
+        }
+    }
 }
