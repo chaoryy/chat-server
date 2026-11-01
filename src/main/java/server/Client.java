@@ -10,8 +10,7 @@ public class Client {
     private Scanner reader;
     private PrintWriter printWriter;
 
-    public Client(String name, Socket socket) throws IOException {
-        this.name = NameGenerator.generateName();
+    public Client(Socket socket) throws IOException {
         this.socket = socket;
         this.reader = getReader(socket);
         this.printWriter = getWriter(socket);
@@ -32,10 +31,14 @@ public class Client {
         return reader.nextLine().strip();
     }
 
-    private void sendResponse(String response, Writer writer) throws IOException {
-        writer.write(response);
-        writer.write(System.lineSeparator());
-        writer.flush();
+    public void send(String msg) {
+        printWriter.println(msg);
+    }
+
+    private void sendResponse(String response) throws IOException {
+        printWriter.write(response);
+        printWriter.write(System.lineSeparator());
+        printWriter.flush();
     }
 
     private boolean isQuitMsg(String msg) {

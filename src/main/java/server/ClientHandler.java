@@ -2,17 +2,19 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
-public class ClientHandler implements Runnable{
+public class ClientHandler implements Runnable {
 
     public ClientHandler(Socket socket) throws IOException {
-        Scanner scanner = getReader(socket);
+
     }
 
     @Override
     public void run() {
+        System.out.printf("Подключен клиент: %s%n", socket);
+        try {
 
+        }
     }
 
     private boolean isEmpty(String msg) {

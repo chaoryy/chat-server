@@ -3,7 +3,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,8 +36,6 @@ public class ChatServer {
 
         try (
                 socket;
-                Scanner reader = getReader(socket);
-                PrintWriter writer = getWriter(socket);
         ) {
             sendResponse("Привет" + socket, writer);
             while (true) {
